@@ -1,23 +1,28 @@
-import { SET_SEARCH_TERM } from './actions';
+// @flow
 
-const DEFAULT_STATE = {
-	searchTerm: ''
-};
+import { combineReducers } from 'redux';
+import { SET_SEARCH_TERM, ADD_API_DATA } from './actions';
 
+// OLD:
 // This is also a reducer. Reducer is anything that takes a state and action and returns state
 // IMPORTANT: don't modify original state. Must create a new state object with assign
-const setSearchTerm = (state, action) => Object.assign({}, state, { searchTerm: action.payload });
+// const searchTerm = (state, action) => Object.assign({}, state, { searchTerm: action.payload });
 
-// Root reducer takes in state and action, and returns another state
-// MUST be same output with same input every time (e.g. no counters)
-const rootReducer = (state = DEFAULT_STATE, action) => {
-	switch (action.type) {
-		case SET_SEARCH_TERM:
-			return setSearchTerm(state, action);
-		// If root reducer gets called with an unknown action, just return state as is
-		default:
-			return state;
+const searchTerm = (state = '', action: Action) => {
+	if (action.type === SET_SEARCH_TERM) {
+		return action.payload;
 	}
+	return state;
 };
+
+const apiData = (state = {}, action: Action) => {
+	if (action.type === ADD_API_DATA) {
+		return Object.assign({}, state, { [action.payload.imdbID]: action.payload });
+	}
+	return state;
+};
+
+// combineReducers sets root reducer to certain state (I think?)
+const rootReducer = combineReducers({ searchTerm, apiData });
 
 export default rootReducer;
